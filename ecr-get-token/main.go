@@ -14,7 +14,7 @@ func main() {
 	var err error
 	var region, accountId string
 	flag.StringVar(&region, "region", "", "AWS region")
-	flag.StringVar(&accountId, "account", "", "Account ID")
+	flag.StringVar(&accountId, "account", "", "Account/Registry ID")
 	flag.Parse()
 
 	if len(region) == 0 {
@@ -24,6 +24,7 @@ func main() {
 
 	config := aws.Config{
 		Region: &region,
+		CredentialsChainVerboseErrors: aws.Bool(true),
 	}
 	sess := session.Must(session.NewSession(&config))
 	client := ecr.New(sess)

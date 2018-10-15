@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -25,6 +27,9 @@ func main() {
 	config := aws.Config{
 		Region: &region,
 		CredentialsChainVerboseErrors: aws.Bool(true),
+		HTTPClient: &http.Client{
+			Timeout: time.Minute,
+		},
 	}
 	sess := session.Must(session.NewSession(&config))
 	client := ecr.New(sess)

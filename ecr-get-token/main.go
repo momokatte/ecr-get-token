@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"net/http"
@@ -54,5 +56,15 @@ func getEcrToken(c *ecr.ECR, accountId string) (*string, error) {
 	if len(resp.AuthorizationData) == 0 {
 		return nil, fmt.Errorf("No authorization tokens found")
 	}
-	return resp.AuthorizationData[0].AuthorizationToken, nil
+	var creds []byte
+	if creds, err = base64.StdEncoding.DecodeString(*resp.AuthorizationData[0].AuthorizationToken); err != nil {
+		return nil, err
+	}
+	// creds are user:password
+	i := bytes.Index(creds, []byte(":"))
+	if i < 0 {
+		return nil, fmt.Errorf("Error parsing token")
+	}
+	// return the password
+	return aws.String(string(creds[i+1:])), nil
 }

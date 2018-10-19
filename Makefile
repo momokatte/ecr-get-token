@@ -12,7 +12,7 @@ clean:
 	$(GOCLEAN)
 	rm -rf ./target
 deps:
-	for DEP in $(shell cat ./Godeps.txt); do $(GOGET) $$DEP; done
+	xargs -t -a ./Godeps.txt -L 1 $(GOGET) -d
 test:
 	$(GOTEST) -v ./$(APP_NAME)/...
 build:
